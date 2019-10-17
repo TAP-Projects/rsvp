@@ -4,12 +4,10 @@ const input = form.querySelector('input');
 const mainDiv = document.querySelector('.main');
 const ul = document.getElementById('invitedList');
 
-const div = document.createElement('div');
-const filterLabel = document.createElement('label');
-const filterCheckBox = document.createElement('input');
+const div = createElement('div');
+const filterLabel = createElement('label', 'Hide those who haven\'t responded' );
+const filterCheckBox = createElement('input', null, [{attr: 'type', value: 'checkbox'}]);
 
-filterLabel.textContent = "Hide those who haven't responded";
-filterCheckBox.type = 'checkbox';
 div.appendChild(filterLabel);
 div.appendChild(filterCheckBox);
 mainDiv.insertBefore(div, ul);
@@ -99,7 +97,19 @@ ul.addEventListener('click', (e) => {
   }
 });  
   
-  
+// createElement takes an element type (as a string), optional text content (as a string), and optional attributes and their values (as an array of objects wherein each object is an attribute/value pair), creates the element, sets the text, sets the attributes, and returns the element
+function createElement(element, text, attributes){
+  const theElem = document.createElement(element);
+  if(text && typeof text === 'string' && text.length > 0){
+    theElem.textContent = text;
+  }
+  if(attributes && isArray(attributes) && attributes.length > 0) {
+    attributes.forEach( (attr) => {
+      theElem.setAttribute(attr.attribute, attr.value);
+    });
+  }
+  return theElem;
+}  
   
   
   
