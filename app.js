@@ -32,22 +32,16 @@ filterCheckBox.addEventListener('change', (e) => {
 });
 
 function createLI(text) {
-  const li = document.createElement('li');
-  const span = document.createElement('span');  
-  span.textContent = text;
-  li.appendChild(span);
-  const label = document.createElement('label');
-  label.textContent = 'Confirmed';
-  const checkbox = document.createElement('input');
-  checkbox.type = 'checkbox';
-  label.appendChild(checkbox);
-  li.appendChild(label);  
-  const editButton = document.createElement('button');
-  editButton.textContent = 'edit';
-  li.appendChild(editButton);
-  const removeButton = document.createElement('button');
-  removeButton.textContent = 'remove';
-  li.appendChild(removeButton);
+  const li = createElement('li');
+  const span = createElement('span', text);  
+  const label = createElement('label', 'Confirmed');
+  const checkbox = createElement('input', null, [{attr: 'type', value: 'checkbox'}]);
+  const editButton = createElement('button', 'edit');
+  const removeButton = createElement('button', 'remove');
+  
+  label.append(checkbox);
+  li.append(span, label, editButton, removeButton);
+
   return li;
 }
 
@@ -56,7 +50,7 @@ form.addEventListener('submit', (e) => {
   const text = input.value;
   input.value = '';
   const li = createLI(text);
-  ul.appendChild(li);
+  ul.append(li);
 });
   
 ul.addEventListener('change', (e) => {
@@ -64,36 +58,42 @@ ul.addEventListener('change', (e) => {
   const checked = checkbox.checked;
   const listItem = checkbox.parentNode.parentNode;
   
-  if (checked) {
-    listItem.className = 'responded';
-  } else {
-    listItem.className = '';
-  }
+  if (checked) listItem.className = 'responded';
+  else listItem.className = '';
 });
   
+const buttonActions = {
+  edit: ()=>{
+    const span = li.firstElementChild;
+    const input = createElement('input', null, [{attr: 'type', value: 'text'}, {attr: 'value', value: span.textContent}]);
+    //li.insertBefore(input, span);
+    span.before(input);
+    //li.removeChild(span);
+    li.remove(span)
+    button.textContent = 'save';
+  },
+  save: ()=>{
+    const input = li.firstElementChild;
+    const span = createElement('span', input.value);
+    //li.insertBefore(span, input);
+    input.before(span);
+    //li.removeChild(input);
+    li.remove(input);
+    button.textContent = 'edit';
+  },
+  remove: ()=>{
+    //ul.removeChild(li);
+    ul.remove(li)
+  }
+} 
+
 ul.addEventListener('click', (e) => {
   if (e.target.tagName === 'BUTTON') {
     const button = e.target;
     const li = button.parentNode;
     const ul = li.parentNode;
-    if (button.textContent === 'remove') {
-      ul.removeChild(li);
-    } else if (button.textContent === 'edit') { 
-      const span = li.firstElementChild;
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.value = span.textContent;
-      li.insertBefore(input, span);
-      li.removeChild(span);
-      button.textContent = 'save';
-    } else if (button.textContent === 'save') { 
-      const input = li.firstElementChild;
-      const span = document.createElement('span');
-      span.textContent = input.value;
-      li.insertBefore(span, input);
-      li.removeChild(input);
-      button.textContent = 'edit';
-    }
+    const buttonText = button.textContent
+    buttonActions[buttonText];
   }
 });  
   
@@ -111,7 +111,7 @@ function createElement(element, text, attributes){
   return theElem;
 }  
   
-  
+// addIt takes a destination element, destination descriptor, and a new element and the new element before, after, prepended, or appended to the destination element  
   
   
   
